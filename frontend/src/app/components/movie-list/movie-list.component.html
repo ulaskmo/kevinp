@@ -1,0 +1,56 @@
+<h2>Movie List</h2>
+
+<!-- New Add Movie Button -->
+<div class="new-add-button-container">
+  <button (click)="navigateToAddMovie()" class="new-add-button">
+    Add New Movie
+  </button>
+</div>
+
+<!-- Existing Search Section -->
+<div class="search-container">
+  <input
+    type="text"
+    [(ngModel)]="searchQuery"
+    (input)="searchMovies()"
+    placeholder="Search by Title"
+    class="search-input"
+  />
+</div>
+
+<!-- Movie List Table -->
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Director</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let movie of filteredMovies">
+      <td>
+        <a (click)="showMovieDetails(movie)" class="movie-title-link">
+          {{ movie.title }}
+        </a>
+      </td>
+      <td>{{ movie.director }}</td>
+      <td>
+        <button (click)="editMovie(movie._id)" class="edit-button">Edit</button>
+        <button (click)="deleteMovie(movie._id)" class="delete-button">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Movie Details Section -->
+<div *ngIf="selectedMovie" class="movie-details">
+  <h3>Movie Details</h3>
+  <p><strong>Title:</strong> {{ selectedMovie.title }}</p>
+  <p><strong>Director:</strong> {{ selectedMovie.director }}</p>
+  <p><strong>Genre:</strong> {{ selectedMovie.genre }}</p>
+  <p><strong>Year:</strong> {{ selectedMovie.year }}</p>
+  <p><strong>Rental Price:</strong> ${{ selectedMovie.rentalPrice }}</p>
+  <p><strong>Available Copies:</strong> {{ selectedMovie.availableCopies }}</p>
+  <button (click)="hideMovieDetails()" class="close-button">Close</button>
+</div>

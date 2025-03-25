@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true, // Needed for Angular decorators
+    "moduleResolution": "node", // Use Node-style module resolution
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ESNext", // Modern module system for Angular
+    "typeRoots": ["node_modules/@types"], // Ensure TypeScript picks up type definitions
+    "lib": ["ES2022", "DOM"], // Include DOM library for browser-based projects
+    "allowSyntheticDefaultImports": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true,
+    "compilationMode": "partial" // Recommended for Ivy compilation
+  }
+}

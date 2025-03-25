@@ -1,0 +1,9 @@
+<div class="details-container" *ngIf="movie">
+  <h2>{{ movie.title }}</h2>
+  <p><strong>Director:</strong> {{ movie.director }}</p>
+  <p><strong>Genre:</strong> {{ movie.genre }}</p>
+  <p><strong>Year:</strong> {{ movie.year }}</p>
+  <p><strong>Rental Price:</strong> ${{ movie.rentalPrice }}</p>
+  <p><strong>Available Copies:</strong> {{ movie.availableCopies }}</p>
+  <a routerLink="/movies" class="back-button">Back to Movie List</a>
+</div>

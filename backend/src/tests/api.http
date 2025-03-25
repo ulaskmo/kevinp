@@ -1,0 +1,88 @@
+### Get All Movies
+GET http://localhost:3000/api/movies
+
+
+### Create Movie W success
+POST http://localhost:3000/api/movies
+Content-Type: application/json
+
+{
+  "title": "The Matrix",
+  "director": "Lana Wachowski, Lilly Wachowski",
+  "genre": "Action",
+  "year": 1999,
+  "rentalPrice": 2.99,
+  "availableCopies": 10
+}
+
+### Create Movie W success
+POST http://localhost:3000/api/movies
+Content-Type: application/json
+
+{
+  "title": "Interstellar",
+  "director": "Christopher Nolan",
+  "genre": "Sci-Fi",
+  "year": 2014,
+  "rentalPrice": 4.99,
+  "availableCopies": 7
+}
+
+### Cant create movie (year missing)
+POST http://localhost:3000/api/movies
+Content-Type: application/json
+
+{
+  "title": "The Dark Knight",
+  "director": "Christopher Nolan",
+  "genre": "Action",
+  "rentalPrice": 3.99,
+  "availableCopies": 5
+}
+
+### getting movie byid succesfully
+GET http://localhost:3000/api/movies/6711809048b5cdb3e939ae38
+
+### cannot get byid because the id is not actually exist
+GET http://localhost:3000/api/movies/6348bfb5ccfbd60d4bf7e001
+
+### deleting movie by using movieid
+DELETE http://localhost:3000/api/movies/6711843c48b5cdb3e939ae3a
+
+### cannot delet movie by using id beacuse id is not exist
+DELETE http://localhost:3000/api/movies/6348bfb5ccfbd60d4bf7e002
+
+### Delete Last Movie (Success) (NOT WORKING CURRENTLY)
+DELETE http://localhost:3000/api/movies/last 
+
+### Delete Last Movie (Fail - No Movies Found) (NOT WORKING CURRENTLY)
+DELETE http://localhost:3000/api/movies/last
+
+### changing the info with using movie id
+PUT http://localhost:3000/api/movies/6711815148b5cdb3e939ae39
+Content-Type: application/json
+
+{
+  "title": "The Dark Knight Rises",
+  "director": "Christopher Nolan",
+  "genre": "Action",
+  "year": 2012,
+  "rentalPrice": 4.99,
+  "availableCopies": 6
+}
+
+### cant change beacuse id is not exist
+PUT http://localhost:3000/api/movies/6348bfb5ccfbd60d4345e003
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "director": "Christopher Nolan",
+  "genre": "Sci-Fi",
+  "year": 2010,
+  "rentalPrice": 3.99,
+  "availableCopies": 4
+}
+
+
+

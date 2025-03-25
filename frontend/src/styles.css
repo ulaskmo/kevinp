@@ -1,0 +1,108 @@
+/* General App Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  h2 {
+    color: #444;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Navigation Bar Styles */
+  nav {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background-color: #007bff;
+    justify-content: center;
+  }
+  
+  .nav-button {
+    border: none;
+    padding: 10px 20px;
+    background-color: white;
+    color: #007bff;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+  
+  .nav-button:hover {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  .nav-button.active {
+    background-color: #0056b3;
+    color: white;
+  }
+  
+  /* Table Styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+  }
+  
+  th,
+  td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  td {
+    color: #333;
+  }
+  
+  tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Buttons in Table */
+  button {
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  
+  button:hover {
+    opacity: 0.9;
+  }
+  
+  button:first-child {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  button:first-child:hover {
+    background-color: #218838;
+  }
+  
+  button:last-child {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  button:last-child:hover {
+    background-color: #c82333;
+  }
+  
