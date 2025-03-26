@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { MovieService } from '../../services/movie.service';
 import { FormsModule } from '@angular/forms';
+import { StateService } from '../../services/state.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
   selector: 'app-movie-list',
@@ -12,60 +13,104 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./movie-list.component.css'],
 })
 export class MovieListComponent implements OnInit {
-  movies: any[] = [];
-  filteredMovies: any[] = [];
-  selectedMovie: any | null = null;
-  searchQuery: string = '';
+  // Local component state
+  searchQuery = signal<string>('');
+  
+  // Computed values from signals
+  movies;
+  loading;
+  error;
+  filteredMovies;
+  selectedMovie;
 
-  constructor(private movieService: MovieService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.fetchMovies();
-  }
-
-  fetchMovies(): void {
-    this.movieService.getMovies().subscribe({
-      next: (data) => {
-        this.movies = data;
-        this.filteredMovies = data;
-      },
-      error: (err) => console.error('Error fetching movies: ', err),
+  constructor(
+    private stateService: StateService, 
+    private router: Router,
+    private analyticsService: AnalyticsService
+  ) {
+    // Initialize computed values from signals
+    this.movies = this.stateService.movies;
+    this.loading = this.stateService.loading;
+    this.error = this.stateService.error;
+    
+    // Computed filtered movies based on search query
+    this.filteredMovies = computed(() => {
+      const query = this.searchQuery().toLowerCase();
+      if (!query) return this.movies();
+      
+      return this.movies().filter((movie) =>
+        movie.title.toLowerCase().includes(query)
+      );
+    });
+    
+    // Selected movie from state
+    this.selectedMovie = computed(() => {
+      const selectedId = this.stateService.selectedMovieId();
+      if (!selectedId) return null;
+      
+      return this.movies().find(movie => movie._id === selectedId);
     });
   }
 
-  searchMovies(): void {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredMovies = this.movies.filter((movie) =>
-      movie.title.toLowerCase().includes(query)
-    );
+  ngOnInit(): void {
+    // Track page view for analytics
+    this.analyticsService.trackPageView('Movie List');
+    
+    // Load movies from state service
+    this.stateService.loadMovies();
+  }
+
+  updateSearchQuery(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+    
+    // Track search event for analytics
+    if (input.value) {
+      this.analyticsService.trackEvent('Search', 'Movie Search', input.value);
+    }
   }
 
   showMovieDetails(movie: any): void {
-    this.selectedMovie = movie;
+    this.stateService.selectMovie(movie._id);
+    
+    // Track movie selection for analytics
+    this.analyticsService.trackEvent('Movie', 'View Details', movie.title);
   }
 
   hideMovieDetails(): void {
-    this.selectedMovie = null;
+    this.stateService.selectMovie(null);
   }
 
   editMovie(id: string): void {
+    // Track edit action for analytics
+    const movie = this.movies().find(m => m._id === id);
+    if (movie) {
+      this.analyticsService.trackEvent('Movie', 'Edit', movie.title);
+    }
+    
     this.router.navigate(['/movies/edit', id]);
   }
 
   deleteMovie(id: string): void {
-    this.movieService.deleteMovie(id).subscribe({
-      next: () => {
-        this.fetchMovies();
-        if (this.selectedMovie && this.selectedMovie._id === id) {
-          this.hideMovieDetails();
-        }
-      },
-      error: (err) => console.error('Error deleting movie: ', err),
-    });
+    // Track delete action for analytics
+    const movie = this.movies().find(m => m._id === id);
+    if (movie) {
+      this.analyticsService.trackEvent('Movie', 'Delete', movie.title);
+    }
+    
+    if (confirm('Are you sure you want to delete this movie?')) {
+      this.stateService.deleteMovie(id);
+      
+      // If the deleted movie is currently selected, hide details
+      if (this.selectedMovie() && this.selectedMovie()._id === id) {
+        this.hideMovieDetails();
+      }
+    }
   }
 
-  // New Method: Navigate to the Add Movie Form
+  // Navigate to the Add Movie Form
   navigateToAddMovie(): void {
+    this.analyticsService.trackEvent('Movie', 'Navigate to Add');
     this.router.navigate(['/movies/add']);
   }
 }

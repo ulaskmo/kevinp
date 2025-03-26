@@ -1,0 +1,49 @@
+service: movie-management-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'prod'}
+  region: ${opt:region, 'eu-west-1'}
+  memorySize: 256
+  timeout: 10
+  environment:
+    NODE_ENV: production
+    DB_CONN_STRING: ${env:DB_CONN_STRING, 'mongodb://localhost:27017'}
+    DB_NAME: ${env:DB_NAME, 'moviedb'}
+  
+  # Enable API Gateway CORS
+  httpApi:
+    cors: true
+
+functions:
+  # Main API handler
+  api:
+    handler: build/serverless.handler
+    events:
+      - httpApi:
+          path: /api/{proxy+}
+          method: ANY
+    environment:
+      FUNCTION_TYPE: api
+
+  # Lambda functions for recommendations and analytics
+  lambda:
+    handler: build/lambda/serverless.handler
+    events:
+      - httpApi:
+          path: /lambda/{proxy+}
+          method: ANY
+    environment:
+      FUNCTION_TYPE: lambda
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3001

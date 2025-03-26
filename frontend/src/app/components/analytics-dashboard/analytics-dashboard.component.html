@@ -1,6 +1,18 @@
 <div class="analytics-container">
-  <h2>Analytics Dashboard</h2>
+  <h2>Movie Analytics Dashboard</h2>
   
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading analytics data...</p>
+  </div>
+  
+  <!-- Error State -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+  
+  <!-- Analytics Controls -->
   <div class="analytics-controls">
     <div class="toggle-container">
       <label>
@@ -19,38 +31,133 @@
       </select>
     </div>
     
+    <div class="date-filter">
+      <label>Date Range:</label>
+      <input type="date" [(ngModel)]="startDate" (change)="loadAnalyticsForPeriod()">
+      <span>to</span>
+      <input type="date" [(ngModel)]="endDate" (change)="loadAnalyticsForPeriod()">
+    </div>
+    
     <div class="action-buttons">
       <button (click)="generateTestEvent()" class="generate-button">Generate Test Event</button>
       <button (click)="clearEvents()" class="clear-button">Clear Events</button>
+      <button (click)="refreshData()" class="refresh-button">Refresh Data</button>
     </div>
   </div>
   
-  <!-- Analytics Summary -->
+  <!-- Movie Analytics Summary -->
   <div class="analytics-summary">
     <div class="summary-card">
-      <h3>Total Events</h3>
+      <h3>Total Movies</h3>
+      <div class="summary-value">{{ movieAnalytics?.totalMovies || 0 }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>Total Rentals</h3>
+      <div class="summary-value">{{ movieAnalytics?.totalRentals || 0 }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>Total Views</h3>
+      <div class="summary-value">{{ getTotalViews() }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>User Events</h3>
       <div class="summary-value">{{ summary.totalEvents }}</div>
-    </div>
-    
-    <div class="summary-card">
-      <h3>Page Views</h3>
-      <div class="summary-value">{{ summary.pageViews }}</div>
-    </div>
-    
-    <div class="summary-card">
-      <h3>User Actions</h3>
-      <div class="summary-value">{{ summary.userActions }}</div>
-    </div>
-    
-    <div class="summary-card">
-      <h3>Errors</h3>
-      <div class="summary-value">{{ summary.errors }}</div>
     </div>
   </div>
   
-  <!-- Events Table -->
+  <!-- Movie Analytics Charts -->
+  <div class="analytics-charts">
+    <div class="chart-container">
+      <h3>Top Viewed Movies</h3>
+      <div *ngIf="movieAnalytics?.topViewed?.length === 0" class="no-data">
+        <p>No view data available</p>
+      </div>
+      <table *ngIf="movieAnalytics?.topViewed?.length > 0" class="data-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Views</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movie of movieAnalytics?.topViewed">
+            <td>{{ movie.title }}</td>
+            <td>{{ movie.viewCount || 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="chart-container">
+      <h3>Top Rented Movies</h3>
+      <div *ngIf="movieAnalytics?.topRented?.length === 0" class="no-data">
+        <p>No rental data available</p>
+      </div>
+      <table *ngIf="movieAnalytics?.topRented?.length > 0" class="data-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Rentals</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movie of movieAnalytics?.topRented">
+            <td>{{ movie.title }}</td>
+            <td>{{ movie.rentCount || 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="chart-container">
+      <h3>Genre Distribution</h3>
+      <div *ngIf="movieAnalytics?.genreDistribution?.length === 0" class="no-data">
+        <p>No genre data available</p>
+      </div>
+      <table *ngIf="movieAnalytics?.genreDistribution?.length > 0" class="data-table">
+        <thead>
+          <tr>
+            <th>Genre</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let genre of movieAnalytics?.genreDistribution">
+            <td>{{ genre._id }}</td>
+            <td>{{ genre.count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="chart-container">
+      <h3>Recently Added Movies</h3>
+      <div *ngIf="movieAnalytics?.recentlyAdded?.length === 0" class="no-data">
+        <p>No recently added movies</p>
+      </div>
+      <table *ngIf="movieAnalytics?.recentlyAdded?.length > 0" class="data-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Added Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movie of movieAnalytics?.recentlyAdded">
+            <td>{{ movie.title }}</td>
+            <td>{{ movie.createdAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- User Events Table -->
   <div class="events-table-container">
-    <h3>Event Log ({{ filteredEvents.length }} events)</h3>
+    <h3>User Event Log ({{ filteredEvents.length }} events)</h3>
     
     <div *ngIf="filteredEvents.length === 0" class="no-events">
       <p>No events to display. Try generating some test events.</p>

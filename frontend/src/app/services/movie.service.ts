@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  private apiUrl = 'http://localhost:3000/api/movies'; // Express API URL
+  private apiUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Get API URL from environment configuration
+    this.apiUrl = `${environment.apiUrl}/movies`;
+    console.log('Movie Service API URL:', this.apiUrl);
+  }
 
   getMovies(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
