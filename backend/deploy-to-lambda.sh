@@ -34,6 +34,10 @@ aws sts get-caller-identity &> /dev/null || {
     exit 1
 }
 
+# Create necessary directories for serverless deployment
+echo -e "${YELLOW}Creating necessary directories for deployment...${NC}"
+mkdir -p build/lambda
+
 # Install dependencies
 echo -e "${YELLOW}Installing dependencies...${NC}"
 npm install
@@ -46,10 +50,32 @@ npm install --save-dev serverless-offline serverless-dotenv-plugin
 echo -e "${YELLOW}Building the TypeScript code...${NC}"
 npm run build
 
+# Create serverless handlers
+echo -e "${YELLOW}Creating serverless handlers...${NC}"
+cat > build/serverless.js << 'EOF'
+const { handler } = require('./index');
+module.exports.handler = handler;
+EOF
+
+cat > build/lambda/serverless.js << 'EOF'
+const { handler } = require('../lambda/index');
+module.exports.handler = handler;
+EOF
+
 # Deploy to AWS Lambda
 echo -e "${YELLOW}Deploying to AWS Lambda...${NC}"
 serverless deploy --verbose
 
-echo -e "${GREEN}Backend deployment completed successfully!${NC}"
-echo -e "${GREEN}Your API is now available at the URL shown above.${NC}"
-echo -e "${YELLOW}Important: Update the frontend environment.prod.ts file with the API Gateway URL.${NC}"
+# Get the API Gateway URL
+API_URL=$(serverless info --verbose | grep -o 'https://[^[:space:]]*.amazonaws.com/prod')
+
+if [ -n "$API_URL" ]; then
+    echo -e "${GREEN}Backend deployment completed successfully!${NC}"
+    echo -e "${GREEN}Your API is now available at: ${API_URL}${NC}"
+    echo -e "${YELLOW}Important: Update the frontend environment.prod.ts file with these values:${NC}"
+    echo -e "${YELLOW}apiUrl: '${API_URL}/api'${NC}"
+    echo -e "${YELLOW}lambdaUrl: '${API_URL}/lambda'${NC}"
+else
+    echo -e "${RED}Deployment may have succeeded, but couldn't extract the API URL.${NC}"
+    echo -e "${RED}Please check the Serverless output above for your API Gateway URL.${NC}"
+fi

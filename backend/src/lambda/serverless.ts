@@ -1,72 +1,155 @@
-import serverless from 'serverless-http';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { connectToDb } from '../database';
 import express from 'express';
 import cors from 'cors';
-import { connectToDatabase } from '../database';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import dotenv from 'dotenv';
+import serverless from 'serverless-http';
 
-// Import the Lambda function handlers
-import { handler as movieRecommendationsHandler } from './movieRecommendations';
+// Load environment variables
+dotenv.config();
 
-// Initialize Express app
+// Create Express app
 const app = express();
 
-// Middleware
-app.use(cors());
+// Enable CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Parse JSON bodies
 app.use(express.json());
 
-// Connect to database
-connectToDatabase()
-  .then(() => console.log('Connected to MongoDB for Lambda functions'))
-  .catch(err => console.error('Failed to connect to MongoDB for Lambda functions:', err));
+// Recommendation endpoint
+app.get('/lambda/recommendations', (req, res) => {
+  const userId = req.query.userId;
+  const genre = req.query.genre;
+  
+  // Mock recommendation logic
+  const recommendations = [
+    {
+      id: '1',
+      title: 'The Shawshank Redemption',
+      genre: 'Drama',
+      rating: 9.3,
+      reason: 'Based on your viewing history'
+    },
+    {
+      id: '2',
+      title: 'The Godfather',
+      genre: 'Crime',
+      rating: 9.2,
+      reason: 'Popular in your area'
+    },
+    {
+      id: '3',
+      title: 'The Dark Knight',
+      genre: 'Action',
+      rating: 9.0,
+      reason: 'You might like this'
+    }
+  ];
+  
+  // Filter by genre if provided
+  const filteredRecommendations = genre 
+    ? recommendations.filter(r => r.genre.toLowerCase() === String(genre).toLowerCase())
+    : recommendations;
+  
+  res.json({
+    userId,
+    recommendations: filteredRecommendations,
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Forward requests to the appropriate Lambda function
-app.use('/api/recommendations', async (req, res) => {
-  try {
-    // Create a mock event for the Lambda function
-    const event: APIGatewayProxyEvent = {
-      path: req.path,
-      httpMethod: req.method,
-      headers: req.headers as { [name: string]: string },
-      queryStringParameters: req.query as { [name: string]: string },
-      body: JSON.stringify(req.body),
-      isBase64Encoded: false,
-      pathParameters: {},
-      multiValueHeaders: {},
-      multiValueQueryStringParameters: {},
-      stageVariables: {},
-      requestContext: {} as any,
-      resource: '',
-    };
-
-    // Call the Lambda function
-    const result = await movieRecommendationsHandler(event, {} as any) as APIGatewayProxyResult;
-
-    // Send the response
-    res.status(result.statusCode).set(result.headers || {}).send(result.body);
-  } catch (error) {
-    console.error('Error forwarding request to Lambda function:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+// Analytics endpoint
+app.get('/lambda/analytics', (req, res) => {
+  // Mock analytics data
+  const analytics = {
+    totalViews: 1245,
+    uniqueUsers: 328,
+    topGenres: [
+      { genre: 'Action', count: 456 },
+      { genre: 'Drama', count: 312 },
+      { genre: 'Comedy', count: 289 }
+    ],
+    topMovies: [
+      { id: '1', title: 'The Shawshank Redemption', views: 89 },
+      { id: '2', title: 'The Godfather', views: 76 },
+      { id: '3', title: 'The Dark Knight', views: 65 }
+    ],
+    timeDistribution: {
+      morning: 245,
+      afternoon: 389,
+      evening: 456,
+      night: 155
+    },
+    timestamp: new Date().toISOString()
+  };
+  
+  res.json(analytics);
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'lambda', timestamp: new Date().toISOString() });
-});
-
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Lambda Error:', err);
-  res.status(500).json({ error: 'Internal Server Error in Lambda function' });
-});
-
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.LAMBDA_PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`Lambda functions running on port ${PORT}`);
+app.get('/lambda/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'lambda',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
   });
-}
+});
 
-// Export the serverless handler
-export const handler = serverless(app);
+// Create serverless handler
+const serverlessHandler = serverless(app);
+
+// Initialize database connection
+let dbInitialized = false;
+
+// Lambda handler
+export const handler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  // Initialize database connection if not already done
+  if (!dbInitialized) {
+    try {
+      await new Promise<void>((resolve) => {
+        connectToDb(() => {
+          dbInitialized = true;
+          resolve();
+        });
+      });
+      console.log('Lambda: Database connection initialized');
+    } catch (error) {
+      console.error('Lambda: Error initializing database connection:', error);
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': 'true',
+        },
+        body: JSON.stringify({ message: 'Database connection error' })
+      };
+    }
+  }
+
+  // Keep the connection alive
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  // Handle the request
+  try {
+    const result = await serverlessHandler(event, context);
+    return result as APIGatewayProxyResult;
+  } catch (error) {
+    console.error('Lambda: Error handling request:', error);
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': 'true',
+      },
+      body: JSON.stringify({ message: 'Internal server error' })
+    };
+  }
+};

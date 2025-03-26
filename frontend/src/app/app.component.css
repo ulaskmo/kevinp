@@ -41,6 +41,36 @@
   font-weight: bold;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.username {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.admin-badge {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.user-badge {
+  background-color: #3498db;
+  color: white;
+}
+
 .auth-buttons button {
   background-color: transparent;
   border: 1px solid white;
@@ -49,10 +79,25 @@
   margin-left: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  border-radius: 4px;
+}
+
+.login-btn {
+  background-color: #2ecc71;
+  border-color: #2ecc71;
+}
+
+.logout-btn {
+  background-color: transparent;
 }
 
 .auth-buttons button:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.login-btn:hover {
+  background-color: #27ae60;
+  border-color: #27ae60;
 }
 
 .main-content {
@@ -64,22 +109,30 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column;
+    flex-wrap: wrap;
     padding: 0.5rem;
   }
   
   .app-title {
     margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  
+  .user-info {
+    order: 1;
+    margin-right: 0;
   }
   
   .auth-buttons {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .auth-buttons button {
-    margin: 0.25rem;
+    order: 2;
   }
 }
 
@@ -88,8 +141,24 @@
     font-size: 1.2rem;
   }
   
+  .nav-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
   .auth-buttons button {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .username {
+    margin-right: 0;
+    margin-bottom: 0.25rem;
   }
 }

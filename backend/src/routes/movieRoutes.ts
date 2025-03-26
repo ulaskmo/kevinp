@@ -9,23 +9,27 @@ import {
     trackRental,
     getMovieAnalytics
 } from '../controllers/movieController';
+import { authenticateToken, requireAdmin } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// Basic CRUD operations
+// Public routes - accessible to all users
 router.get('/', getMovies);
-router.post('/', createMovie);
 router.get('/:id', getMovieById);
-router.put('/:id', updateMovie);
-router.delete('/:id', deleteMovie);
 
-// Special operations
-router.delete('/last', deleteLastMovie);
+// Protected routes - require authentication
+router.use(authenticateToken);
 
-// Analytics endpoints
-router.get('/analytics/data', getMovieAnalytics);
-
-// Rental tracking
+// Routes accessible to authenticated users (both regular users and admins)
 router.post('/:id/rent', trackRental);
+
+// Admin-only routes
+router.post('/', requireAdmin, createMovie);
+router.put('/:id', requireAdmin, updateMovie);
+router.delete('/:id', requireAdmin, deleteMovie);
+router.delete('/last', requireAdmin, deleteLastMovie);
+
+// Analytics endpoints - admin only
+router.get('/analytics/data', requireAdmin, getMovieAnalytics);
 
 export default router;

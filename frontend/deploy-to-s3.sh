@@ -8,7 +8,6 @@ set -e
 
 # Configuration
 S3_BUCKET_NAME="kevinprojectmybucket"
-DISTRIBUTION_ID="EW4Z66Z0DSMWF" # CloudFront distribution ID
 REGION="eu-west-1" # AWS region
 
 # Colors for output
@@ -43,6 +42,10 @@ if [ ! -d "dist" ]; then
     exit 1
 fi
 
+# We're using a direct dist output path in angular.json
+BUILD_DIR="dist"
+echo -e "${YELLOW}Using build directory: ${BUILD_DIR}${NC}"
+
 # Deploy to S3
 echo -e "${YELLOW}Deploying to S3 bucket: ${S3_BUCKET_NAME}...${NC}"
 
@@ -73,14 +76,33 @@ if ! aws s3 ls "s3://${S3_BUCKET_NAME}" &> /dev/null; then
     rm /tmp/bucket-policy.json
 fi
 
-# Sync the build directory with the S3 bucket
-aws s3 sync dist/ "s3://${S3_BUCKET_NAME}" --delete
+# Sync the build directory with the S3 bucket - simplified approach
+echo -e "${YELLOW}Uploading files to S3...${NC}"
 
-# If using CloudFront, invalidate the cache
-if [ -n "${DISTRIBUTION_ID}" ] && [ "${DISTRIBUTION_ID}" != "YOUR_CLOUDFRONT_DISTRIBUTION_ID" ]; then
-    echo -e "${YELLOW}Invalidating CloudFront cache...${NC}"
-    aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*"
-fi
+# First, clear the bucket to ensure no old files remain
+aws s3 rm "s3://${S3_BUCKET_NAME}" --recursive
+
+# Then upload all files with a single sync command
+aws s3 sync "${BUILD_DIR}/" "s3://${S3_BUCKET_NAME}" --delete
+
+# Verify the upload
+echo -e "${YELLOW}Verifying upload...${NC}"
+aws s3 ls "s3://${S3_BUCKET_NAME}" --recursive
+
+# Set proper permissions for public access
+echo -e "${YELLOW}Setting proper permissions for public access...${NC}"
+aws s3api put-bucket-policy --bucket "${S3_BUCKET_NAME}" --policy '{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::'${S3_BUCKET_NAME}'/*"
+        }
+    ]
+}'
 
 # Get the website URL
 WEBSITE_URL="http://${S3_BUCKET_NAME}.s3-website-${REGION}.amazonaws.com"

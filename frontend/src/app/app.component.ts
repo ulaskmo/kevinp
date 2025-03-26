@@ -1,30 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, RouterLink, RouterLinkActive, CommonModule], // Auth0 is configured in app.config.ts
+  imports: [RouterModule, RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'movie-management';
 
-  constructor(public auth: AuthService) {}
+  constructor(public authService: AuthService) {}
 
-  login(): void {
-    this.auth.loginWithRedirect();
+  ngOnInit(): void {
+    // Check if user is already logged in (from localStorage)
+    this.authService.getCurrentUser().subscribe();
   }
 
   logout(): void {
-    this.auth.logout({
-      openUrl: (url: string) => {
-        window.location.replace(url); // Handle logout redirect manually
-      },
-    });
-    window.location.reload(); // Optional: Refresh the page after logout
+    this.authService.logout();
   }
 }
