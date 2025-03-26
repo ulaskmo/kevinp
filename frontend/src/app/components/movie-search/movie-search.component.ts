@@ -26,21 +26,34 @@ export class MovieSearchComponent {
   ) {}
 
   searchMovies(): void {
-    if (!this.searchQuery.trim()) {
-      return;
-    }
+    if (!this.searchQuery.trim()) return;
 
     this.loading = true;
     this.error = null;
     this.searchResults = [];
     this.selectedMovie = null;
 
-    // Always use simulation data since we're having issues with the API key
-    console.log('Using simulation data for search:', this.searchQuery);
-    this.useFallbackSearch();
+    this.externalApiService.searchMovies(this.searchQuery).subscribe({
+      next: (response) => {
+        this.loading = false;
+        if (response.success) {
+          this.searchResults = response.results || [];
+          if (this.searchResults.length === 0) {
+            this.error = 'No movies found matching your search.';
+          }
+        } else {
+          console.warn('Real API failed, falling back to mock:', response.error);
+          this.useFallbackSearch(); // fallback if OMDb fails
+        }
+      },
+      error: (err) => {
+        console.error('OMDb API error, falling back to simulation:', err);
+        this.loading = false;
+        this.useFallbackSearch(); // fallback on error
+      }
+    });
   }
-  
-  // Fallback to simulation data if the real API fails
+
   private useFallbackSearch(): void {
     this.externalApiService.simulateMovieSearch(this.searchQuery).subscribe({
       next: (response) => {
@@ -67,15 +80,24 @@ export class MovieSearchComponent {
     this.error = null;
     this.selectedMovie = null;
 
-    // Log the movie ID for debugging
-    console.log('Viewing details for movie ID:', imdbId);
-    
-    // Always use simulation data since we're having issues with the API key
-    console.log('Using simulation data for movie details:', imdbId);
-    this.useFallbackDetails(imdbId);
+    this.externalApiService.getMovieDetails(imdbId).subscribe({
+      next: (response) => {
+        this.loading = false;
+        if (response.success) {
+          this.selectedMovie = response.movie;
+        } else {
+          console.warn('Fallback to simulation for details:', response.error);
+          this.useFallbackDetails(imdbId);
+        }
+      },
+      error: (err) => {
+        console.error('OMDb detail fetch failed, fallback:', err);
+        this.loading = false;
+        this.useFallbackDetails(imdbId);
+      }
+    });
   }
-  
-  // Fallback to simulation data if the real API fails
+
   private useFallbackDetails(imdbId: string): void {
     this.externalApiService.simulateMovieDetails(imdbId).subscribe({
       next: (response) => {
@@ -100,11 +122,10 @@ export class MovieSearchComponent {
     const movie = {
       title: this.selectedMovie.Title,
       director: this.selectedMovie.Director,
-      genre: this.selectedMovie.Genre.split(',')[0].trim(), // Take the first genre
+      genre: this.selectedMovie.Genre.split(',')[0].trim(),
       year: parseInt(this.selectedMovie.Year),
-      rentalPrice: 4.99, // Default rental price
-      availableCopies: 5, // Default available copies
-      // Additional fields from external API
+      rentalPrice: 4.99,
+      availableCopies: 5,
       plot: this.selectedMovie.Plot,
       actors: this.selectedMovie.Actors,
       poster: this.selectedMovie.Poster,
@@ -113,7 +134,7 @@ export class MovieSearchComponent {
     };
 
     this.movieService.addMovie(movie).subscribe({
-      next: (response) => {
+      next: () => {
         this.importSuccess = `Successfully imported "${movie.title}" to your movie collection!`;
         setTimeout(() => {
           this.importSuccess = null;
