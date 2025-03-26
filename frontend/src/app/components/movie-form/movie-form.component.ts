@@ -48,30 +48,59 @@ export class MovieFormComponent implements OnInit {
 
   // Load movie data for editing
   loadMovieData(): void {
-    this.movieService.getMovies().subscribe((movies) => {
-      const movie = movies.find((m) => m._id === this.movieId);
-      if (movie) {
-        this.movieForm.patchValue(movie); // Populate the form with movie data
-      }
-    });
+    if (this.movieId) {
+      this.movieService.getMovieById(this.movieId).subscribe({
+        next: (movie) => {
+          if (movie) {
+            this.movieForm.patchValue(movie); // Populate the form with movie data
+            console.log('Loaded movie data:', movie);
+          }
+        },
+        error: (err) => {
+          console.error('Error loading movie data:', err);
+        }
+      });
+    }
   }
 
   // Handle form submission for adding or editing
   onSubmit(): void {
     if (this.movieForm.valid) {
       const movie = this.movieForm.value;
+      console.log('Submitting movie data:', movie);
 
       if (this.movieId) {
         // Update an existing movie
-        this.movieService.updateMovie(this.movieId, movie).subscribe(() => {
-          this.router.navigate(['/movies']); // Navigate back to movie list
+        this.movieService.updateMovie(this.movieId, movie).subscribe({
+          next: (response) => {
+            console.log('Movie updated successfully:', response);
+            this.router.navigate(['/movies']); // Navigate back to movie list
+          },
+          error: (err) => {
+            console.error('Error updating movie:', err);
+            alert('Failed to update movie. Please try again.');
+          }
         });
       } else {
         // Add a new movie
-        this.movieService.addMovie(movie).subscribe(() => {
-          this.router.navigate(['/movies']); // Navigate back to movie list
+        this.movieService.addMovie(movie).subscribe({
+          next: (response) => {
+            console.log('Movie added successfully:', response);
+            this.router.navigate(['/movies']); // Navigate back to movie list
+          },
+          error: (err) => {
+            console.error('Error adding movie:', err);
+            alert('Failed to add movie. Please try again.');
+          }
         });
       }
+    } else {
+      // Mark all form controls as touched to trigger validation messages
+      Object.keys(this.movieForm.controls).forEach(key => {
+        const control = this.movieForm.get(key);
+        control?.markAsTouched();
+      });
+      console.error('Form is invalid:', this.movieForm.errors);
     }
   }
 }

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MovieService } from '../../services/movie.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-movie-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.css'],
 })

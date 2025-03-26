@@ -1,43 +1,95 @@
-/* General Navigation Bar Styles */
-nav {
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3f51b5;
+  color: white;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.auth-buttons button {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-buttons button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-content {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+  
+  .app-title {
+    margin-bottom: 0.5rem;
+  }
+  
+  .auth-buttons {
+    width: 100%;
     display: flex;
-    gap: 10px;
-    margin: 15px 0;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    justify-content: flex-start;
+    justify-content: center;
   }
   
-  /* Button-Like Navigation Links */
-  .nav-button {
-    border: none;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .auth-buttons button {
+    margin: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 1.2rem;
   }
   
-  /* Hover Effect */
-  .nav-button:hover {
-    background-color: #0056b3;
+  .auth-buttons button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
   }
-  
-/* Active Button Style */
-.nav-button.active {
-    background-color: #28a745; /* Green for active */
-    color: white;
-    border: 1px solid #1e7e34;
-  }
-  
-  
-  /* Ensure Pointer Cursor on Hover */
-  .nav-button {
-    cursor: pointer;
-  }
-  
+}

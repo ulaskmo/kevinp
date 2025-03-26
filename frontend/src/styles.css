@@ -1,108 +1,144 @@
-/* General App Styles */
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* Responsive Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Responsive Typography */
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+p {
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive Form Elements */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #3f51b5;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #303f9f;
+}
+
+/* Responsive Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
   }
   
   h2 {
-    color: #444;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 1.3rem;
   }
   
-  /* Navigation Bar Styles */
-  nav {
-    display: flex;
-    gap: 10px;
-    padding: 15px;
-    background-color: #007bff;
-    justify-content: center;
-  }
-  
-  .nav-button {
-    border: none;
-    padding: 10px 20px;
-    background-color: white;
-    color: #007bff;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-  }
-  
-  .nav-button:hover {
-    background-color: #0056b3;
-    color: white;
-  }
-  
-  .nav-button.active {
-    background-color: #0056b3;
-    color: white;
-  }
-  
-  /* Table Styles */
   table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    background: white;
+    display: block;
+    overflow-x: auto;
   }
   
-  th,
-  td {
-    text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
+  .form-control {
+    font-size: 0.9rem;
   }
   
-  th {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  td {
-    color: #333;
-  }
-  
-  tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Buttons in Table */
   button {
-    border: none;
-    padding: 5px 10px;
-    margin-right: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
   }
   
-  button:hover {
-    opacity: 0.9;
+  h2 {
+    font-size: 1.2rem;
   }
   
-  button:first-child {
-    background-color: #28a745;
-    color: white;
+  .container {
+    padding: 10px;
   }
   
-  button:first-child:hover {
-    background-color: #218838;
+  th, td {
+    padding: 0.5rem;
   }
-  
-  button:last-child {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  button:last-child:hover {
-    background-color: #c82333;
-  }
-  
+}
+
+/* Material Design Theming */
+.mat-mdc-card {
+  margin-bottom: 1rem;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+/* Loading Spinner */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}

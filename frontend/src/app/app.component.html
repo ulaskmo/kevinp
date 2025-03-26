@@ -1,10 +1,15 @@
 <nav class="navbar">
-    <span class="app-title">Movie Management</span>
-    <div class="auth-buttons">
-      <button *ngIf="!(auth.isAuthenticated$ | async)" (click)="login()">Login</button>
-      <button *ngIf="auth.isAuthenticated$ | async" (click)="logout()">Logout</button>
-    </div>
-  </nav>
-  
+  <span class="app-title">Movie Management</span>
+  <div class="nav-links" *ngIf="auth.isAuthenticated$ | async">
+    <a routerLink="/movies" routerLinkActive="active">Movies</a>
+    <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
+  </div>
+  <div class="auth-buttons">
+    <button *ngIf="!(auth.isAuthenticated$ | async)" (click)="login()">Login</button>
+    <button *ngIf="auth.isAuthenticated$ | async" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="main-content">
   <router-outlet></router-outlet>
-  
+</div>

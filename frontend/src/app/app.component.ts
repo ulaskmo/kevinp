@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, CommonModule], // Auth0 is configured in main.ts
+  imports: [RouterModule, RouterLink, RouterLinkActive, CommonModule], // Auth0 is configured in app.config.ts
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

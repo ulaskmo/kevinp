@@ -1,9 +1,12 @@
 <h2>Movie List</h2>
 
-<!-- New Add Movie Button -->
-<div class="new-add-button-container">
+<!-- Action Buttons -->
+<div class="action-buttons-container">
   <button (click)="navigateToAddMovie()" class="new-add-button">
     Add New Movie
+  </button>
+  <button routerLink="/movies/search" class="search-button">
+    Search External Database
   </button>
 </div>
 

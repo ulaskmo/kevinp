@@ -1,9 +1,46 @@
-<div class="details-container" *ngIf="movie">
+<div class="movie-details-container" *ngIf="movie">
   <h2>{{ movie.title }}</h2>
-  <p><strong>Director:</strong> {{ movie.director }}</p>
-  <p><strong>Genre:</strong> {{ movie.genre }}</p>
-  <p><strong>Year:</strong> {{ movie.year }}</p>
-  <p><strong>Rental Price:</strong> ${{ movie.rentalPrice }}</p>
-  <p><strong>Available Copies:</strong> {{ movie.availableCopies }}</p>
-  <a routerLink="/movies" class="back-button">Back to Movie List</a>
+  
+  <div class="movie-info">
+    <div class="movie-info-item">
+      <span class="movie-info-label">Director:</span>
+      <span class="movie-info-value">{{ movie.director }}</span>
+    </div>
+    
+    <div class="movie-info-item">
+      <span class="movie-info-label">Genre:</span>
+      <span class="movie-info-value">{{ movie.genre }}</span>
+    </div>
+    
+    <div class="movie-info-item">
+      <span class="movie-info-label">Year:</span>
+      <span class="movie-info-value">{{ movie.year }}</span>
+    </div>
+    
+    <div class="movie-info-item">
+      <span class="movie-info-label">Rental Price:</span>
+      <span class="movie-info-value">${{ movie.rentalPrice }}</span>
+    </div>
+    
+    <div class="movie-info-item">
+      <span class="movie-info-label">Available Copies:</span>
+      <span class="movie-info-value">{{ movie.availableCopies }}</span>
+    </div>
+  </div>
+  
+  <div class="action-buttons">
+    <button routerLink="/movies" class="back-button">Back to Movie List</button>
+    <button (click)="editMovie()" class="edit-button">Edit Movie</button>
+    <button (click)="deleteMovie()" class="delete-button">Delete Movie</button>
+  </div>
+  
+  <!-- Movie Recommendations Component -->
+  <app-movie-recommendations 
+    [movieId]="movieId" 
+    [genre]="movie.genre">
+  </app-movie-recommendations>
+</div>
+
+<div *ngIf="!movie" class="spinner-container">
+  <p>Loading movie details...</p>
 </div>

@@ -1,0 +1,88 @@
+<div class="analytics-container">
+  <h2>Analytics Dashboard</h2>
+  
+  <div class="analytics-controls">
+    <div class="toggle-container">
+      <label>
+        <input type="checkbox" [(ngModel)]="analyticsEnabled" (change)="toggleAnalytics()">
+        Analytics Tracking {{ analyticsEnabled ? 'Enabled' : 'Disabled' }}
+      </label>
+    </div>
+    
+    <div class="filter-container">
+      <label>Filter by type:</label>
+      <select [(ngModel)]="filterType" (change)="filterEvents()">
+        <option value="all">All Events</option>
+        <option value="PAGE_VIEW">Page Views</option>
+        <option value="EVENT">User Actions</option>
+        <option value="ERROR">Errors</option>
+      </select>
+    </div>
+    
+    <div class="action-buttons">
+      <button (click)="generateTestEvent()" class="generate-button">Generate Test Event</button>
+      <button (click)="clearEvents()" class="clear-button">Clear Events</button>
+    </div>
+  </div>
+  
+  <!-- Analytics Summary -->
+  <div class="analytics-summary">
+    <div class="summary-card">
+      <h3>Total Events</h3>
+      <div class="summary-value">{{ summary.totalEvents }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>Page Views</h3>
+      <div class="summary-value">{{ summary.pageViews }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>User Actions</h3>
+      <div class="summary-value">{{ summary.userActions }}</div>
+    </div>
+    
+    <div class="summary-card">
+      <h3>Errors</h3>
+      <div class="summary-value">{{ summary.errors }}</div>
+    </div>
+  </div>
+  
+  <!-- Events Table -->
+  <div class="events-table-container">
+    <h3>Event Log ({{ filteredEvents.length }} events)</h3>
+    
+    <div *ngIf="filteredEvents.length === 0" class="no-events">
+      <p>No events to display. Try generating some test events.</p>
+    </div>
+    
+    <table *ngIf="filteredEvents.length > 0" class="events-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Details</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of filteredEvents" [ngClass]="{'page-view': event.type === 'PAGE_VIEW', 'user-action': event.type === 'EVENT', 'error': event.type === 'ERROR'}">
+          <td>{{ event.type }}</td>
+          <td>
+            <div *ngIf="event.type === 'PAGE_VIEW'">
+              Page: {{ event.pageName }}
+            </div>
+            <div *ngIf="event.type === 'EVENT'">
+              {{ event.category }} / {{ event.action }}
+              <span *ngIf="event.label"> / {{ event.label }}</span>
+              <span *ngIf="event.value"> / {{ event.value }}</span>
+            </div>
+            <div *ngIf="event.type === 'ERROR'">
+              {{ event.errorType }}: {{ event.errorMessage }}
+            </div>
+          </td>
+          <td>{{ event.timestamp | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

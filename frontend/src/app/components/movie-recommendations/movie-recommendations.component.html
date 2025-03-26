@@ -1,0 +1,58 @@
+<div class="recommendations-container">
+  <!-- Similar Movies Section -->
+  <div *ngIf="movieId && similarMovies.length > 0" class="recommendation-section">
+    <h3>Similar Movies</h3>
+    <div class="loading-message" *ngIf="loading.similar">Loading similar movies...</div>
+    <div class="error-message" *ngIf="error.similar">{{ error.similar }}</div>
+    
+    <div class="movie-cards" *ngIf="!loading.similar && !error.similar">
+      <div class="movie-card" *ngFor="let movie of similarMovies">
+        <h4>{{ movie.title }}</h4>
+        <p><strong>Director:</strong> {{ movie.director }}</p>
+        <p><strong>Genre:</strong> {{ movie.genre }}</p>
+        <p><strong>Year:</strong> {{ movie.year }}</p>
+        <button [routerLink]="['/movies/details', movie._id]" class="view-button">View Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Genre Recommendations Section -->
+  <div *ngIf="genre && recommendedMovies.length > 0" class="recommendation-section">
+    <h3>More {{ genre }} Movies</h3>
+    <div class="loading-message" *ngIf="loading.recommended">Loading recommendations...</div>
+    <div class="error-message" *ngIf="error.recommended">{{ error.recommended }}</div>
+    
+    <div class="movie-cards" *ngIf="!loading.recommended && !error.recommended">
+      <div class="movie-card" *ngFor="let movie of recommendedMovies">
+        <h4>{{ movie.title }}</h4>
+        <p><strong>Director:</strong> {{ movie.director }}</p>
+        <p><strong>Year:</strong> {{ movie.year }}</p>
+        <button [routerLink]="['/movies/details', movie._id]" class="view-button">View Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Top Rated Movies Section -->
+  <div *ngIf="topRatedMovies.length > 0" class="recommendation-section">
+    <h3>Top Rated Movies</h3>
+    <div class="loading-message" *ngIf="loading.topRated">Loading top rated movies...</div>
+    <div class="error-message" *ngIf="error.topRated">{{ error.topRated }}</div>
+    
+    <div class="movie-cards" *ngIf="!loading.topRated && !error.topRated">
+      <div class="movie-card" *ngFor="let movie of topRatedMovies">
+        <h4>{{ movie.title }}</h4>
+        <p><strong>Director:</strong> {{ movie.director }}</p>
+        <p><strong>Genre:</strong> {{ movie.genre }}</p>
+        <p><strong>Year:</strong> {{ movie.year }}</p>
+        <button [routerLink]="['/movies/details', movie._id]" class="view-button">View Details</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- No Recommendations Message -->
+  <div *ngIf="!loading.similar && !loading.recommended && !loading.topRated && 
+              similarMovies.length === 0 && recommendedMovies.length === 0 && topRatedMovies.length === 0"
+       class="no-recommendations">
+    <p>No movie recommendations available at this time.</p>
+  </div>
+</div>

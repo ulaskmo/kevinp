@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=moviedb
+    networks:
+      - app-network
+
+  # Backend service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-backend
+    container_name: movie-backend
+    restart: always
+    ports:
+      - "3000:3000"
+      - "3001:3001"  # For Lambda functions
+    environment:
+      - PORT=3000
+      - LAMBDA_PORT=3001
+      - DB_CONN_STRING=mongodb://mongodb:27017
+      - DB_NAME=moviedb
+      - NODE_ENV=development
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  # Frontend service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build-frontend
+    container_name: movie-frontend
+    restart: always
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

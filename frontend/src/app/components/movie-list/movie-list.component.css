@@ -1,104 +1,126 @@
-/* Add New Movie Button */
-.add-button-container {
-    margin: 20px 0;
-    text-align: right;
-  }
-  
-  .add-button {
-    background-color:purple;
-    display: inline-block;
-    pointer-events: auto; /* Ensure the button is clickable */
-  }
-  
-  .add-button:hover {
-    background-color: #838821;
-  }
-  
-  /* Movie List Table */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  th,
-  td {
-    text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  th {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .movie-title-link {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .movie-title-link:hover {
-    color: #0056b3;
-  }
-  
-  /* Movie Details Section */
-  .movie-details {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .movie-details h3 {
-    margin-bottom: 15px;
-    color: #444;
-  }
-  
-  .movie-details p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
-  
-  .close-button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .close-button:hover {
-    background-color: #c82333;
-  }
-  
-  /* Search Section */
+h2 {
+  margin-bottom: 1.5rem;
+  color: #3f51b5;
+}
+
 .search-container {
-  margin-bottom: 20px;
-  text-align: right;
+  margin-bottom: 1.5rem;
 }
 
 .search-input {
-  padding: 10px;
-  width: 50%;
-  font-size: 14px;
+  width: 100%;
+  padding: 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 2px solid #ddd;
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.movie-title-link {
+  color: #3f51b5;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.movie-title-link:hover {
+  text-decoration: underline;
+}
+
+.edit-button, .delete-button {
+  margin-right: 0.5rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.edit-button {
+  background-color: #4caf50;
+}
+
+.delete-button {
+  background-color: #f44336;
+}
+
+.movie-details {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.movie-details h3 {
+  color: #3f51b5;
+  margin-bottom: 1rem;
+}
+
+.close-button {
+  margin-top: 1rem;
+  background-color: #757575;
+}
+
+.action-buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.new-add-button {
+  background-color: #4caf50;
+}
+
+.search-button {
+  background-color: #3f51b5;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .edit-button, .delete-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-details {
+    padding: 1rem;
+  }
+  
+  th, td {
+    padding: 0.5rem;
+  }
+  
+  .edit-button, .delete-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin-right: 0.25rem;
+  }
+  
+  .new-add-button-container {
+    justify-content: center;
+  }
 }
